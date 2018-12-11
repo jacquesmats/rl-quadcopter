@@ -2,8 +2,11 @@ from agents.actor import Actor
 from agents.critic import Critic
 from agents.aux import OUNoise
 from agents.aux import ReplayBuffer
-import numpy as np
 
+from keras import layers, models, optimizers
+from keras import backend as K
+import numpy as np
+        
 class DDPG():
     """Reinforcement Learning agent that learns using DDPG."""
     def __init__(self, task):
@@ -32,13 +35,13 @@ class DDPG():
         self.noise = OUNoise(self.action_size, self.exploration_mu, self.exploration_theta, self.exploration_sigma)
 
         # Replay memory
-        self.buffer_size = 100000
+        self.buffer_size = 100000#0
         self.batch_size = 64
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
 
         # Algorithm parameters
-        self.gamma = 0.99  # discount factor
-        self.tau = 0.01  # for soft update of target parameters
+        self.gamma = 0.99 # discount factor
+        self.tau = 0.001  # for soft update of target parameters
 
     def reset_episode(self):
         self.noise.reset()
