@@ -29,34 +29,16 @@ class Task():
         self.target_pos = target_pos if target_pos is not None else np.array([0., 0., 10.]) 
 
     def get_reward(self):
-        """Uses current pose of sim to return reward."""
+        """Uses current pose of sim to return reward.""" 
+        reward = 1.-.003*(abs(self.sim.pose[:3] - self.target_pos)).sum()
         
-        #reward = -30*np.tan(0.01*(abs(self.sim.pose[:3] - self.target_pos).sum())+1.65)-300
-        
-        reward = -3*np.tanh(0.5*(abs(self.sim.pose[:3] - self.target_pos).sum())-10)
-        #Penalize crashing with the ground
-        if self.sim.done and self.sim.runtime > self.sim.time and self.sim.pose[2] == 0:
+        if self.sim.done and self.sim.runtime > self.sim.time:
             reward -= 10
             
-        #Penalize for any velocity in z axis for any velocity the penalization increse when near the ground z=0
-        reward -= 0.0009*((self.sim.v[2]**2)/(self.sim.pose[2]+1))
-        
-        
-        
-        
-        #reward = -1*np.tanh(0.01*(abs(self.sim.pose[:3] - self.target_pos).sum())-2)
-        #reward = -30*np.tan(0.01*(abs(self.sim.pose[:3] - self.target_pos).sum())+1.65)-300
-        #reward = 1.-.3*(abs(self.sim.pose[:3] - self.target_pos)).sum()
-        
-#         # Penalize going far from the objective.       
-#         if (abs(self.sim.pose[:3] - self.target_pos)).sum() > (abs(self.last_pose[:3] - self.target_pos)).sum():
-#             reward -= .015*(abs(self.sim.pose[:3] - self.target_pos)).sum()
-#             self.last_pose = self.sim.pose[:3]
-            
-#         #Penalize crashing with the ground
-#         if self.sim.done and self.sim.runtime > self.sim.time:
-#             reward -= 20
-        
+        # Double reward if reach the goal
+        if (abs(self.sim.pose[:3] - self.target_pos)).sum() == 0:
+            reward += 50
+
         return reward
 
     def step(self, rotor_speeds):
