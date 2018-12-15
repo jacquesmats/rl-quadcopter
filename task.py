@@ -30,7 +30,8 @@ class Task():
 
     def get_reward(self):
         """Uses current pose of sim to return reward.""" 
-        reward = 1.-.003*(abs(self.sim.pose[:3] - self.target_pos)).sum()
+        reward = .7-.003*(abs(self.sim.pose[2] - self.target_pos[2])).sum()
+        reward += .3-.003*(abs(self.sim.pose[:2] - self.target_pos[:2])).sum()
         
         if self.sim.done and self.sim.runtime > self.sim.time:
             reward -= 10
